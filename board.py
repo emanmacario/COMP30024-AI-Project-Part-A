@@ -57,5 +57,35 @@ class Board:
 
         return row
 
+    def isValidMove(piece, direction):
+        '''
+        Gets given a piece and its inteded
+        direction of movement and decides whether
+        the move would be legal.
+        '''
 
 
+    def move(piece, direction):
+        '''
+        Moves a given piece in a given direction
+        if the move has already been checked as being
+        legal.
+        '''
+
+
+    def checkWinner():
+        '''
+        Checks the board to see if either player
+        has officially won the game.
+        Returns the Player object if that player
+        has won.
+        '''
+
+
+    def checkKill():
+        '''
+        Checks the game board to see if any piece
+        is in a position where it is eliminated.
+        Returns the row and column of a piece if it
+        needs to be eliminated.
+        '''
