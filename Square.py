@@ -1,2 +1,5 @@
 class Square:
-    def __init__(self):
+    def __init__(self, row, col, state):
+        self.row = row
+        self.col = col
+        self.state = state        

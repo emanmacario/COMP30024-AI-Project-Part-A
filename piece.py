@@ -10,7 +10,7 @@ class Piece:
         self.row = row
         self.col = col
         self.colour = colour
-
+        self.priority = False
 
 
 
