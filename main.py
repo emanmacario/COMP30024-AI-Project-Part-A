@@ -1,7 +1,7 @@
 from board import *
 
 
-def parse_input(board):
+def parse_input():
     """
     Reads in a board configuration from
     the standard input, as well as the method
@@ -12,29 +12,43 @@ def parse_input(board):
     # The total number of lines to be inputted
     TOTAL_LINES = 9
 
+    # The board configuration, stored as a
+    # two dimensional list of characters
+    board_config = []
+
     # Read in each row, one by one
     for _ in range(TOTAL_LINES-1):
-        row = Board.from_str(input())
-        print(row)
+        row = input().rstrip('\r').split(' ')
+        board_config.append(row)
+
 
     # Read in the method of analysis
     method = input()
-    print(method)
 
-    return method
+    return method, board_config
 
 
 
 def main():
     """
-    Main program, controlling the flow of execution.
+    Main driver program for Part A, controlling the flow of execution.
     """
 
-    # Create a new board.
-    board = Board(Board.WIDTH, Board.HEIGHT)
+    # Parse the input data, getting the
+    # board configuration and the method of analysis
+    method, board_config = parse_input()
 
-    # Parse the input data, and update the board.
-    parse_input(board)
+
+    # Create a new board, based on the given board configuration
+    board = Board(board_config)
+
+
+    if method == "Moves":
+        print("Moves\n")
+        print("Need to get total moves for each player")
+    else:
+        print("Massacre\n")
+        print("Need to get sequence for White to eliminate Black!")
 
 
 
