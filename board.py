@@ -43,6 +43,54 @@ class Board:
         # Print the board configuration
         print(self)
 
+        # Prints all possible moves for every piece on the board
+        self.print_all_possible_moves(self.WHITE_SQUARE)
+        self.print_all_possible_moves(self.BLACK_SQUARE)
+
+        
+
+    def print_all_possible_moves(self, char):
+        """For all pieces on the board, prints all possible moves"""
+
+        total = 0
+
+        for i in range(self.height):
+            for j in range(self.width):
+                piece = self.squares[i][j].char
+
+                if piece != char:
+                    continue
+
+                print("Piece: '{:s}' at ({:d},{:d})".format(piece,j,i))
+
+                can_move = self.is_valid_move(self.DIRECTION_UP, i, j)
+                if (can_move):
+                    print(self.DIRECTION_UP)
+                    total += 1
+
+                
+                can_move = self.is_valid_move(self.DIRECTION_RIGHT, i, j)
+                if (can_move):
+                    print(self.DIRECTION_RIGHT)
+                    total += 1
+
+
+                can_move = self.is_valid_move(self.DIRECTION_DOWN, i, j)
+                if can_move:
+                    print(self.DIRECTION_DOWN)
+                    total += 1
+
+
+                can_move = self.is_valid_move(self.DIRECTION_LEFT, i, j)
+                if can_move:
+                    print(self.DIRECTION_LEFT)
+                    total += 1
+            print("\n")
+
+        print("Total possible moves for '{:s}': {:d}".format(char, total))
+
+
+
                 
 
     def fill_board(self, board_config):
@@ -89,6 +137,9 @@ class Board:
         """
 
 
+
+
+
     def is_valid_move(self, direction, row, column):
         """
         Returns True if a move is valid, else returns False.
@@ -120,7 +171,7 @@ class Board:
             return False
 
         # If the square is empty, it is a valid move
-        if squares[row][column].char == self.EMPTY_SQUARE:
+        if self.squares[row][column].char == self.EMPTY_SQUARE:
             return True
 
 
@@ -140,8 +191,10 @@ class Board:
 
 
         # If the square is empty, it is a valid move
-        if squares[row][column].char == self.EMPTY_SQUARE:
+        if self.squares[row][column].char == self.EMPTY_SQUARE:
             return True
+
+        return False
 
 
 
