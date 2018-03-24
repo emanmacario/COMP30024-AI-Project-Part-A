@@ -1,4 +1,5 @@
 from board import *
+from game import *
 
 
 def parse_input():
@@ -40,9 +41,9 @@ def main():
 
 
     # Create a new board, based on the given board configuration
-    board = Board(board_config)
+    game = WatchYourBack(board_config)
 
-
+    # Based on the method of analysis, print the results
     if method == "Moves":
         print("Moves\n")
         print("Need to get total moves for each player")

@@ -4,6 +4,7 @@ which represents the entire game board.
 '''
 
 from square import *
+from collections import defaultdict
 
 
 class Board:
@@ -20,10 +21,10 @@ class Board:
     DIRECTION_RIGHT = "RIGHT"
 
     # Possible pieces
-    EMPTY_SQUARE  = '-'
-    CORNER_SQUARE = 'X'
-    BLACK_SQUARE  = '@'
-    WHITE_SQUARE  = 'O'
+    SQUARE_EMPTY  = '-'
+    SQUARE_CORNER = 'X'
+    SQUARE_BLACK  = '@'
+    SQUARE_WHITE  = 'O'
 
 
     def __init__(self, board_config=None, width=8, height=8):
@@ -44,8 +45,8 @@ class Board:
         print(self)
 
         # Prints all possible moves for every piece on the board
-        self.print_all_possible_moves(self.WHITE_SQUARE)
-        self.print_all_possible_moves(self.BLACK_SQUARE)
+        #self.print_all_possible_moves(self.SQUARE_WHITE)
+        #self.print_all_possible_moves(self.SQUARE_BLACK)
 
         
 
@@ -60,7 +61,7 @@ class Board:
 
                 if piece != char:
                     continue
-
+                
                 print("Piece: '{:s}' at ({:d},{:d})".format(piece,j,i))
 
                 can_move = self.is_valid_move(self.DIRECTION_UP, i, j)
@@ -153,7 +154,7 @@ class Board:
 
         # First check that the certain piece on a square 
         # we are trying to move actually exists.
-        if piece == self.EMPTY_SQUARE or piece == self.CORNER_SQUARE:
+        if piece == self.SQUARE_EMPTY or piece == self.SQUARE_CORNER:
             return False
 
         # Calculate the new co-ordinates of the piece, given the direction
@@ -171,7 +172,7 @@ class Board:
             return False
 
         # If the square is empty, it is a valid move
-        if self.squares[row][column].char == self.EMPTY_SQUARE:
+        if self.squares[row][column].char == self.SQUARE_EMPTY:
             return True
 
 
@@ -191,15 +192,16 @@ class Board:
 
 
         # If the square is empty, it is a valid move
-        if self.squares[row][column].char == self.EMPTY_SQUARE:
+        if self.squares[row][column].char == self.SQUARE_EMPTY:
             return True
 
         return False
 
 
 
-    def __repr__(self):
-        """Representation of the current board"""
+    def __str__(self):
+        """Representation of the current board,
+        used for visualisation by the players"""
         board_repr = ""
 
         for row in self.squares:
@@ -209,4 +211,23 @@ class Board:
 
         return board_repr
 
+
+
+    def __repr__(self):
+        """Representation of the current board,
+        used to represent the board as a dictionary
+        of tuples to pieces
+
+        i.e. {(x,y):'X'}
+        """
+        s = defaultdict(str)
+
+        for i in range(8):
+            for j in range(8):
+                square = self.squares[i][j]
+
+                if square.char != self.SQUARE_EMPTY:    
+                    s[(j,i)] = square.char
+
+        return s
 
