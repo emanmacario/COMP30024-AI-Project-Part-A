@@ -226,8 +226,8 @@ class Board:
             for j in range(8):
                 square = self.squares[i][j]
 
-                if square.char != self.SQUARE_EMPTY:    
-                    s[(j,i)] = square.char
+                #if square.char != self.SQUARE_EMPTY:    
+                s[(j,i)] = square.char
 
         return s
 
