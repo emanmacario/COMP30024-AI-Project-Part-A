@@ -2,6 +2,10 @@
 Game class
 """
 
+# NOTE: - multiple elimination works
+#       - priority elimination works
+
+
 from board import *
 
 from collections import namedtuple
@@ -86,7 +90,6 @@ class WatchYourBack(Game):
     SQUARE_WHITE  = 'O'
 
 
-
     def __init__(self, board_config=None, size=8):
         self.size = 8
         self.board = self.init_board(board_config)
@@ -111,7 +114,7 @@ class WatchYourBack(Game):
 
 
         # Make a move
-        new_state = self.result(self.initial, ((5,6),(6,6)))
+        new_state = self.result(self.initial, ((2,1),(2,2)))
         print(new_state.to_move)
 
   
@@ -121,9 +124,6 @@ class WatchYourBack(Game):
 
         print(self.is_surrounded((6,5), '@', new_state.board))
         
-
-
-
 
 ################################################################################
         
@@ -219,7 +219,7 @@ class WatchYourBack(Game):
         which just moved. Mutates the input board"""
 
         # Check each position in the board
-        for point in sorted(list(board)):
+        for point in list(board):
 
             # Do not eliminate a priority piece in
             # the first iteration of eliminations
@@ -252,7 +252,7 @@ class WatchYourBack(Game):
 
         # Get the enemy pieces. A corner square is considered
         # to be an enemy piece in this context, since it has
-        # the ability to eliminate a piece
+        # the ability to eliminate any piece.
         enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
 
 
@@ -281,8 +281,12 @@ class WatchYourBack(Game):
 
 
     def terminal_test(self, state):
-        """A state is terminal if it is won or
-        has resulted in a tie"""
+        """
+        A state is terminal if it is won or
+        has resulted in a tie. A game is won if
+        either player has less than 2 remaining
+        pieces on the board.
+        """
 
         white_pieces = 0
         black_pieces = 0
@@ -324,8 +328,7 @@ class WatchYourBack(Game):
 
                         all_moves[point].append(new_valid_point)
 
-
-                
+   
         return all_moves
     
 
