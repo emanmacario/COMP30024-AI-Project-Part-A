@@ -7,6 +7,7 @@ Game class
 #       - corner elimination works
 
 from board import *
+from search import *
 
 from collections import namedtuple
 from collections import defaultdict
@@ -122,8 +123,8 @@ class WatchYourBack(Game):
         self.display(new_state)
         
 
-        print(self.is_surrounded((6,5), '@', new_state.board))
-        
+        # print(self.is_surrounded((6,5), '@', new_state.board))
+
 
 ################################################################################
         
@@ -166,13 +167,29 @@ class WatchYourBack(Game):
         print(total_black_moves)
 
 
+    def get_legal_move_sequence(self):
+        """
+        Prints a sequence of legal moves for the White
+        player that would lead all black pieces being 
+        eliminated, to the standard output.
+        """
+        terminal_node = iterative_deepening_search(self)
+        self.display(terminal_node.state)
+
+
 ################################################################################
 
 
     def actions(self, state):
         """Return all the legal moves for current state"""
 
-        return state.moves
+        possible_moves = []
+
+        for start in state.moves:
+            for end in state.moves[start]:
+                possible_moves.append((start,end))
+
+        return possible_moves
 
 
 
@@ -282,26 +299,24 @@ class WatchYourBack(Game):
 
     def terminal_test(self, state):
         """
-        A state is terminal if it is won or
-        has resulted in a tie. A game is won if
-        either player has less than 2 remaining
-        pieces on the board.
+        Tests whether a state is terminal. For
+        the purpose of Part A, a state is considered terminal
+        if all Black pieces are eliminated. In a real
+        game, however, a state is terminal if there are
+        less than 2 remaining pieces for either player.
         """
 
-        white_pieces = 0
         black_pieces = 0
 
         # Might need to do list(state.board) to avoid bugs
         for point in state.board:
             if state.board[point] == '@':
                 black_pieces += 1
-            elif state.board[point] == 'O':
-                white_pieces += 1   
 
 
         # The state is terminal if black or white has less than
         # two pieces on the board
-        if white_pieces < 2 or black_pieces < 2:
+        if black_pieces == 0:
             return True
 
         return False
