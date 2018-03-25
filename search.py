@@ -77,7 +77,7 @@ def depth_limited_search(game, limit=100):
             cutoff_occurred = False
             for child in node.expand(game):
                 result = recursive_dls(child, game, limit-1)
-                if result == 'cutoff'
+                if result == 'cutoff':
                     cutoff_occurred = True
                 elif result is not None:
                     return result
