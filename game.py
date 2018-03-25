@@ -93,12 +93,8 @@ class WatchYourBack(Game):
 
 
     def __init__(self, board_config=None, size=8):
-        self.size = 8
+        self.size = size
         self.board = self.init_board(board_config)
-
-
-        # print board state
-        print(self.__repr__())
 
 
         # Get the moves for a player
@@ -110,26 +106,6 @@ class WatchYourBack(Game):
                         board=self.board,
                         moves=moves)
 
-
-        # Print all moves for the initial state
-        self.print_all_moves(self.initial)
-
-        print()
-
-        """
-        # Make a move
-        new_state = self.result(self.initial, ((5,2),(5,4)))
-        print(new_state.to_move)
-
-  
-        self.print_all_moves(new_state)
-
-
-        """
-        
-
-        # print(self.is_surrounded((6,5), '@', new_state.board))
-        
 
 
 ################################################################################
@@ -210,14 +186,16 @@ class WatchYourBack(Game):
 
 
     def actions(self, state):
-        """Return all the legal moves for current state"""
+        """Return all the legal moves for current game
+        state as a list of 2-tuple of 2-tuples.
+        E.g [((x1,y1),(x2,y2)), ..., ...]
+        """
 
         possible_moves = []
 
         for start in state.moves:
             for end in state.moves[start]:
                 possible_moves.append((start,end))
-
 
         return possible_moves
 
@@ -238,18 +216,21 @@ class WatchYourBack(Game):
         # Create a copy of the board
         new_board = state.board.copy()
 
+
         # Make the move
         new_board[start] = '-'
         new_board[end] = state.to_move
 
 
-        # Perform piece elimination after the move
-        new_board = self.eliminate_pieces(end, new_board)
+        # Perform piece elimination after the move, 
+        # giving the newly moved piece elimination priority.
+        self.eliminate_pieces(end, new_board)
 
 
         # Get the next player to move, and all
         # the new possible moves for that player
         # new_to_move = 'O' if state.to_move == '@' else '@'
+        # In part A, only White will move
         new_to_move = 'O'
 
         new_moves = self.get_all_moves(new_board, new_to_move)
@@ -280,9 +261,8 @@ class WatchYourBack(Game):
             if piece != '@' and piece != 'O':
                 continue
 
-            #print("'{0}' at {1}: {2}".format(piece, point, 
-            #    self.is_surrounded(point, piece, board)))
-
+            # If a piece is surrounded, remove
+            # the piece from the board.
             if self.is_surrounded(point, piece, board):
                 board[point] = '-'
 
@@ -290,8 +270,6 @@ class WatchYourBack(Game):
         # Finally, check if the priority piece is eliminated
         if self.is_surrounded(end, board[end], board):
             board[end] = '-'
-
-        return board
 
 
 
@@ -302,7 +280,7 @@ class WatchYourBack(Game):
 
         # Get the enemy pieces. A corner square is considered
         # to be an enemy piece in this context, since it has
-        # the ability to eliminate any piece.
+        # the ability to eliminate either Black or White pieces.
         enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
 
 
@@ -315,8 +293,7 @@ class WatchYourBack(Game):
 
         # Return true if a piece should be eliminated, else return false
         if (left in enemy_pieces and right in enemy_pieces) or \
-            (up in enemy_pieces and down in enemy_pieces):
-
+                (up in enemy_pieces and down in enemy_pieces):
             return True
 
         return False

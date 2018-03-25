@@ -91,6 +91,10 @@ def depth_limited_search(game, limit=100):
 
 
 def iterative_deepening_search(game):
+    """
+    Perform iterative deepening search on
+    a state space for the game Watch Your Back!
+    """
     for depth in range(sys.maxsize):
         result = depth_limited_search(game, depth)
         if result != 'cutoff':
