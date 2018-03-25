@@ -11,6 +11,7 @@ from search import *
 
 from collections import namedtuple
 from collections import defaultdict
+import copy
 
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
@@ -113,17 +114,22 @@ class WatchYourBack(Game):
         # Print all moves for the initial state
         self.print_all_moves(self.initial)
 
+        print()
 
+        """
         # Make a move
-        new_state = self.result(self.initial, ((1,1),(0,1)))
+        new_state = self.result(self.initial, ((5,2),(5,4)))
         print(new_state.to_move)
 
   
         self.print_all_moves(new_state)
-        self.display(new_state)
+
+
+        """
         
 
         # print(self.is_surrounded((6,5), '@', new_state.board))
+        
 
 
 ################################################################################
@@ -167,6 +173,7 @@ class WatchYourBack(Game):
         print(total_black_moves)
 
 
+
     def get_legal_move_sequence(self):
         """
         Prints a sequence of legal moves for the White
@@ -174,7 +181,29 @@ class WatchYourBack(Game):
         eliminated, to the standard output.
         """
         terminal_node = iterative_deepening_search(self)
+
+        if terminal_node is None:
+            print("Fuck you cunt")
+            return
+
+
+        print("Final state")
         self.display(terminal_node.state)
+
+
+        print("Printing board states leading to elimination")
+        for node in terminal_node.path():
+            self.display(node.state)
+
+        
+        moves = terminal_node.solution()
+
+        print("Printing moves leading to elimination")
+        for (start, end) in moves:
+            print("{0} -> {1}".format(start, end))
+        
+
+        
 
 
 ################################################################################
@@ -189,6 +218,7 @@ class WatchYourBack(Game):
             for end in state.moves[start]:
                 possible_moves.append((start,end))
 
+
         return possible_moves
 
 
@@ -202,7 +232,7 @@ class WatchYourBack(Game):
         # Illegal moves have no effect
         if start not in list(state.moves) or end not in state.moves[start]:
             print("Illegal move: {0} -> {1}".format(start, end))
-            return state 
+            return copy.deepcopy(state)
 
 
         # Create a copy of the board
@@ -214,14 +244,15 @@ class WatchYourBack(Game):
 
 
         # Perform piece elimination after the move
-        self.eliminate_pieces(end, new_board)
+        new_board = self.eliminate_pieces(end, new_board)
 
 
         # Get the next player to move, and all
         # the new possible moves for that player
-        new_to_move = 'O' if state.to_move == '@' else '@'
-        new_moves = self.get_all_moves(new_board, new_to_move)
+        # new_to_move = 'O' if state.to_move == '@' else '@'
+        new_to_move = 'O'
 
+        new_moves = self.get_all_moves(new_board, new_to_move)
 
         # Return the new gamestate
         return GameState(to_move=new_to_move, utility=0,
@@ -259,6 +290,8 @@ class WatchYourBack(Game):
         # Finally, check if the priority piece is eliminated
         if self.is_surrounded(end, board[end], board):
             board[end] = '-'
+
+        return board
 
 
 
@@ -336,14 +369,14 @@ class WatchYourBack(Game):
 
         for point in list(board):
             if board[point] == player:
+
                 for direction in directions:
 
-                    if self.is_legal_move(point, direction, player):
-                        new_valid_point = self.get_valid_point(point, direction)
+                    if self.is_legal_move(board, point, direction, player):
+                        new_valid_point = self.get_valid_point(board, point, direction)
 
                         all_moves[point].append(new_valid_point)
 
-   
         return all_moves
     
 
@@ -374,6 +407,7 @@ class WatchYourBack(Game):
         of the current board configuration"""
 
         board = state.board
+
         board_repr = ""
 
         for i in range(self.size):
@@ -385,31 +419,34 @@ class WatchYourBack(Game):
         print(board_repr)
 
 
-    def is_legal_move(self, start, direction, player):
+
+    def is_legal_move(self, board, start, direction, player):
         """Returns if a move is legal, given a starting
         point, and a direction"""
 
         # First check to see if the player has a piece on that
         # square.
-        if self.board[start] != player:
+        if board[start] != player:
             return False
 
         # Calculate new possible points
         new_point = self.get_new_point(start, direction)
         jump_point = self.get_new_point(new_point, direction)
         
-        if self.is_square_open(new_point) or self.is_square_open(jump_point):
+        if self.is_square_open(board, new_point) or \
+                                 self.is_square_open(board, jump_point):
             return True
 
         return False
 
 
 
-    def is_square_open(self, point):
+    # HERE IS THE FUCKING BUG (FIXED NOW)
+    def is_square_open(self, board, point):
         """A square is open if the there is no opponent
         piece on it, and it is not a corner square."""
 
-        return self.board[point] == '-'
+        return board[point] == '-'
 
 
 
@@ -436,7 +473,7 @@ class WatchYourBack(Game):
 
 
 
-    def get_valid_point(self, start, direction):
+    def get_valid_point(self, board, start, direction):
         """Returns the new point of a piece after
         making a valid move"""
 
@@ -444,7 +481,7 @@ class WatchYourBack(Game):
         new_point = self.get_new_point(start, direction)
         jump_point = self.get_new_point(new_point, direction)
         
-        if self.is_square_open(new_point):
+        if self.is_square_open(board, new_point):
             return new_point
 
         return jump_point
