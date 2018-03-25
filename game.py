@@ -87,23 +87,28 @@ class WatchYourBack(Game):
 
 
 
-    def __init__(self, board_config=None):
-        self.board = Board(board_config)
-        self.initial = GameState(to_move='@', utility=0, 
-                        board=self.board.__repr__(),
-                        moves=[])
+    def __init__(self, board_config=None, size=8):
+        self.size = 8
+        self.board = self.init_board(board_config)
 
 
-        # Print the board as a dictionary
+        # print board state
+        print(self.__repr__())
 
-        print(self.initial.board)
-
-        print("\n\n\nAll possible moves for '{:s}'".format(self.initial.to_move))
-        moves = self.get_all_moves(self.board.__repr__(), '@')
-        for position in moves:
-            print(position, moves[position])
+        # Get the moves for a player
+        moves = self.get_all_moves(self.board, 'O')
 
 
+        # Print all moves for a player
+        print("Printing all moves for '{:s}'".format('O'))
+        for start in sorted(list(moves)):
+            print(start, moves[start])
+
+
+        # Create the initial game state
+        self.initial = GameState(to_move='O', utility=0, 
+                        board=self.board,
+                        moves=moves)
 
         # print(self.is_legal_move((5,3), self.DIRECTION_LEFT, 'O'))
         
@@ -126,7 +131,7 @@ class WatchYourBack(Game):
 
         all_moves = defaultdict(list)
 
-        for point in board:
+        for point in list(board):
             if board[point] == player:
                 for direction in directions:
 
@@ -138,7 +143,26 @@ class WatchYourBack(Game):
 
                 
         return all_moves
-        
+    
+
+
+    def init_board(self, board_config):
+        """Initialise the board from the input
+        board configuration, where the board is
+        a dictionary of tuple keys to character
+        values (pieces). E.g. {(1,2):'X'}
+        """
+
+        board = defaultdict(str)
+
+        for row in range(self.size):
+            for column in range(self.size):
+
+                char = board_config[row][column] 
+
+                board[(column, row)] = char
+
+        return board
 
 
 
@@ -150,7 +174,7 @@ class WatchYourBack(Game):
     def display(self, state):
         """Print or otherwise display the state
         of the current board configuration"""
-        print(self.board.__str__())
+        print(state.board.__repr__())
 
 
 
@@ -160,7 +184,7 @@ class WatchYourBack(Game):
 
         # First check to see if the player has a piece on that
         # square.
-        if self.initial.board[start] != player:
+        if self.board[start] != player:
             return False
 
         # Calculate new possible points
@@ -178,7 +202,7 @@ class WatchYourBack(Game):
         """A square is open if the there is no opponent
         piece on it, and it is not a corner square."""
 
-        return self.initial.board[point] == '-'
+        return self.board[point] == '-'
 
 
 
@@ -217,3 +241,20 @@ class WatchYourBack(Game):
             return new_point
 
         return jump_point
+
+
+
+    def __repr__(self):
+        """Representation of the board state,
+        exact same as the input configuration
+        given in the spec"""
+
+        board_repr = ""
+
+        for i in range(self.size):
+            for j in range(self.size):
+                board_repr += (self.board[(j,i)] + ' ')
+
+            board_repr += "\n" 
+
+        return board_repr
