@@ -4,7 +4,7 @@ Game class
 
 # NOTE: - multiple elimination works
 #       - priority elimination works
-
+#       - corner elimination works
 
 from board import *
 
@@ -114,7 +114,7 @@ class WatchYourBack(Game):
 
 
         # Make a move
-        new_state = self.result(self.initial, ((2,1),(2,2)))
+        new_state = self.result(self.initial, ((1,1),(0,1)))
         print(new_state.to_move)
 
   
