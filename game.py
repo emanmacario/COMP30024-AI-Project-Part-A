@@ -100,28 +100,26 @@ class WatchYourBack(Game):
         moves = self.get_all_moves(self.board, 'O')
 
 
-        """
-        # Print all moves for a player
-        print("Printing all moves for '{:s}'".format('O'))
-        for start in sorted(list(moves)):
-            print(start, moves[start])
-        """
-
         # Create the initial game state
         self.initial = GameState(to_move='O', utility=0, 
                         board=self.board,
                         moves=moves)
 
 
+        # Print all moves for the initial state
+        self.print_all_moves(self.initial)
 
-        """
-        new_state = self.result(self.initial, ((5,2),(5,4)))
+
+        # Make a move
+        new_state = self.result(self.initial, ((5,6),(6,6)))
         print(new_state.to_move)
 
   
         self.print_all_moves(new_state)
         self.display(new_state)
-        """
+        
+
+        print(self.is_surrounded((6,5), '@', new_state.board))
         
 
 
@@ -186,6 +184,7 @@ class WatchYourBack(Game):
 
         # Illegal moves have no effect
         if start not in list(state.moves) or end not in state.moves[start]:
+            print("Illegal move: {0} -> {1}".format(start, end))
             return state 
 
 
@@ -196,13 +195,81 @@ class WatchYourBack(Game):
         new_board[start] = '-'
         new_board[end] = state.to_move
 
+
+        # Perform piece elimination after the move
+        self.eliminate_pieces(end, new_board)
+
+
         # Get the next player to move, and all
         # the new possible moves for that player
         new_to_move = 'O' if state.to_move == '@' else '@'
         new_moves = self.get_all_moves(new_board, new_to_move)
 
+
+        # Return the new gamestate
         return GameState(to_move=new_to_move, utility=0,
                          board=new_board, moves=new_moves)
+
+
+
+
+    def eliminate_pieces(self, end, board):
+        """Eliminates pieces on the board after a given
+        move, taking into account the priority of the piece
+        which just moved. Mutates the input board"""
+
+        # Check each position in the board
+        for point in sorted(list(board)):
+
+            # Do not eliminate a priority piece in
+            # the first iteration of eliminations
+            if point == end:
+                continue
+
+            piece = board[point]
+
+            # Only check the Black or White pieces
+            if piece != '@' and piece != 'O':
+                continue
+
+            #print("'{0}' at {1}: {2}".format(piece, point, 
+            #    self.is_surrounded(point, piece, board)))
+
+            if self.is_surrounded(point, piece, board):
+                board[point] = '-'
+
+
+        # Finally, check if the priority piece is eliminated
+        if self.is_surrounded(end, board[end], board):
+            board[end] = '-'
+
+
+
+
+    def is_surrounded(self, point, piece, board):
+        """Returns true if a piece is surrounded horizontally
+        or vertically by enemy pieces or corner squares"""
+
+        # Get the enemy pieces. A corner square is considered
+        # to be an enemy piece in this context, since it has
+        # the ability to eliminate a piece
+        enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
+
+
+        # Get all neighbouring pieces
+        left  = board[self.get_new_point(point, self.DIRECTION_LEFT)]
+        right = board[self.get_new_point(point, self.DIRECTION_RIGHT)]
+        up    = board[self.get_new_point(point, self.DIRECTION_UP)]
+        down  = board[self.get_new_point(point, self.DIRECTION_DOWN)]
+
+
+        # Return true if a piece should be eliminated, else return false
+        if (left in enemy_pieces and right in enemy_pieces) or \
+            (up in enemy_pieces and down in enemy_pieces):
+
+            return True
+
+        return False
 
 
 
