@@ -95,24 +95,80 @@ class WatchYourBack(Game):
         # print board state
         print(self.__repr__())
 
+
         # Get the moves for a player
         moves = self.get_all_moves(self.board, 'O')
 
 
+        """
         # Print all moves for a player
         print("Printing all moves for '{:s}'".format('O'))
         for start in sorted(list(moves)):
             print(start, moves[start])
-
+        """
 
         # Create the initial game state
         self.initial = GameState(to_move='O', utility=0, 
                         board=self.board,
                         moves=moves)
 
-        # print(self.is_legal_move((5,3), self.DIRECTION_LEFT, 'O'))
+
+
+        """
+        new_state = self.result(self.initial, ((5,2),(5,4)))
+        print(new_state.to_move)
+
+  
+        self.print_all_moves(new_state)
+        self.display(new_state)
+        """
         
 
+
+
+
+################################################################################
+        
+    # DEBUGGING FUNCTIONS
+
+    def print_all_moves(self, state):
+        """Print all moves for a player"""
+
+        print("Printing all moves for '{:s}'".format(state.to_move))
+
+        for start in sorted(list(state.moves)):
+            print(start, state.moves[start])
+
+
+
+################################################################################
+
+    # PART A FUNCTIONS
+
+    def print_legal_moves(self):
+        """
+        Prints the legal move counts for both the
+        White player and Black player to standard output,
+        in that order
+        """
+
+        white_moves = self.get_all_moves(self.board, 'O')
+        black_moves = self.get_all_moves(self.board, '@')
+
+        total_white_moves = 0
+        total_black_moves = 0
+
+        for start in white_moves:
+            total_white_moves += len(white_moves[start])
+
+        for start in black_moves:
+            total_black_moves += len(black_moves[start])
+
+        print(total_white_moves)
+        print(total_black_moves)
+
+
+################################################################################
 
 
     def actions(self, state):
@@ -122,8 +178,69 @@ class WatchYourBack(Game):
 
 
 
+    def result(self, state, move):
+        """Returns the result of a given action for a the current state"""
+
+        # A move is a 2-tuple of 2-tuples E.g. ((1,2),(1,3))
+        start, end = move
+
+        # Illegal moves have no effect
+        if start not in list(state.moves) or end not in state.moves[start]:
+            return state 
+
+
+        # Create a copy of the board
+        new_board = state.board.copy()
+
+        # Make the move
+        new_board[start] = '-'
+        new_board[end] = state.to_move
+
+        # Get the next player to move, and all
+        # the new possible moves for that player
+        new_to_move = 'O' if state.to_move == '@' else '@'
+        new_moves = self.get_all_moves(new_board, new_to_move)
+
+        return GameState(to_move=new_to_move, utility=0,
+                         board=new_board, moves=new_moves)
+
+
+
+    def utility(self, state, player):
+        """Returns a utility value for a player,
+        given the current state"""
+        pass
+
+
+
+    def terminal_test(self, state):
+        """A state is terminal if it is won or
+        has resulted in a tie"""
+
+        white_pieces = 0
+        black_pieces = 0
+
+        # Might need to do list(state.board) to avoid bugs
+        for point in state.board:
+            if state.board[point] == '@':
+                black_pieces += 1
+            elif state.board[point] == 'O':
+                white_pieces += 1   
+
+
+        # The state is terminal if black or white has less than
+        # two pieces on the board
+        if white_pieces < 2 or black_pieces < 2:
+            return True
+
+        return False
+
+
+
     def get_all_moves(self, board, player):
-        """All possible moves for a player"""
+        """All possible moves for a player, as a dictionary
+        of tuples (start points), to lists of tuples (possible
+        end point)"""
 
 
         directions = [self.DIRECTION_DOWN, self.DIRECTION_LEFT,
@@ -166,16 +283,21 @@ class WatchYourBack(Game):
 
 
 
-    def result(self, state, move):
-        """Returns the result of a given action for a the current state"""
-
-
 
     def display(self, state):
         """Print or otherwise display the state
         of the current board configuration"""
-        print(state.board.__repr__())
 
+        board = state.board
+        board_repr = ""
+
+        for i in range(self.size):
+            for j in range(self.size):
+                board_repr += (board[(j,i)] + ' ')
+
+            board_repr += "\n" 
+
+        print(board_repr)
 
 
     def is_legal_move(self, start, direction, player):

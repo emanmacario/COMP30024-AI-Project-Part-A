@@ -43,12 +43,12 @@ def main():
     # Create a new board, based on the given board configuration
     game = WatchYourBack(board_config)
 
+
     # Based on the method of analysis, print the results
     if method == "Moves":
-        print("Moves\n")
-        print("Need to get total moves for each player")
+        game.print_legal_moves()
     else:
-        print("Massacre\n")
+        print("Massacre")
         print("Need to get sequence for White to eliminate Black!")
 
 
