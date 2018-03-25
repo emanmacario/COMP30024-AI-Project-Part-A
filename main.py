@@ -48,8 +48,7 @@ def main():
     if method == "Moves":
         game.print_legal_moves()
     else:
-        print("Massacre")
-        print("Need to get sequence for White to eliminate Black!")
+        game.get_legal_move_sequence()
 
 
 
