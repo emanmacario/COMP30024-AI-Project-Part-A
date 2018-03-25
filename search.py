@@ -41,7 +41,8 @@ class Node:
 
     def solution(self):
         """Return the sequence of actions to go from the root
-        to this node"""
+        to this node. Since the root node does not have an
+        action, skip it"""
         return [node.action for node in self.path()[1:]]
 
 
