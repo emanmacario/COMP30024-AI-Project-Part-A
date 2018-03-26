@@ -1,6 +1,10 @@
 """
 Game class
 """
+# BUG NEEDED TO BE FIXED
+# Note to self: when you access a value of a default dict that isnt there, you
+# actually create a new one
+
 
 # NOTE: - multiple elimination works
 #       - priority elimination works
@@ -107,6 +111,35 @@ class WatchYourBack(Game):
                         moves=moves)
 
 
+        self.print_all_moves(self.initial)
+
+        new_state = self.result(self.initial, (((5,2),(6,2))))
+
+        newer_state = self.result(new_state, ((6,2),(5,2)))
+
+        print("Does comparing states work?")
+        print("Initial state:")
+        print(self.initial.to_move == newer_state.to_move)
+        print(self.initial.utility == newer_state.utility)
+        print(self.initial.board == newer_state.board)
+        print(self.initial.moves == newer_state.moves)
+
+
+        print()
+        for i in range(8):
+            for j in range(8):
+                point = (i, j)
+
+                if self.initial.board[point] != newer_state.board[point]:
+                    print("Point:", point)
+                    print("At initial board: ", self.initial.board[point])
+                    print("At newer board:   ", newer_state.board[point])
+
+        print(sorted(self.initial.board.keys()))
+        print(sorted(newer_state.board.keys()))
+
+        print("Newer board (8,6):", newer_state.board[(8,6)])
+
 
 ################################################################################
         
@@ -159,7 +192,7 @@ class WatchYourBack(Game):
         terminal_node = iterative_deepening_search(self)
 
         if terminal_node is None:
-            print("Fuck you cunt")
+            print("You fucked up son. No solution!")
             return
 
 
@@ -283,6 +316,8 @@ class WatchYourBack(Game):
         # the ability to eliminate either Black or White pieces.
         enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
 
+        # THERE WILL BE A BUG HERE, SINCE WE MAY BE ACCESSING
+        # VALUES OFF THE BOARD, LEADING TO SHIT LIKE board[(8,6)] = ''
 
         # Get all neighbouring pieces
         left  = board[self.get_new_point(point, self.DIRECTION_LEFT)]
@@ -338,9 +373,11 @@ class WatchYourBack(Game):
         of tuples (start points), to lists of tuples (possible
         end point)"""
 
-
-        directions = [self.DIRECTION_DOWN, self.DIRECTION_LEFT,
-                      self.DIRECTION_RIGHT, self.DIRECTION_UP]
+        # Note that directions have been placed purposefully in this
+        # order such that moves can be inserted in order to a list.
+        # This avoids the overhead of sorting.
+        directions = [self.DIRECTION_LEFT, self.DIRECTION_UP,
+                      self.DIRECTION_DOWN, self.DIRECTION_RIGHT]
 
         all_moves = defaultdict(list)
 
@@ -422,6 +459,10 @@ class WatchYourBack(Game):
     def is_square_open(self, board, point):
         """A square is open if the there is no opponent
         piece on it, and it is not a corner square."""
+
+        x,y = point
+        if (x < 0 or x > 7 or y < 0 or y > 7):
+            return False
 
         return board[point] == '-'
 
