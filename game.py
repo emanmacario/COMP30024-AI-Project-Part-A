@@ -320,10 +320,36 @@ class WatchYourBack(Game):
         # VALUES OFF THE BOARD, LEADING TO SHIT LIKE board[(8,6)] = ''
 
         # Get all neighbouring pieces
-        left  = board[self.get_new_point(point, self.DIRECTION_LEFT)]
-        right = board[self.get_new_point(point, self.DIRECTION_RIGHT)]
-        up    = board[self.get_new_point(point, self.DIRECTION_UP)]
-        down  = board[self.get_new_point(point, self.DIRECTION_DOWN)]
+        x, y = self.get_new_point(point, self.DIRECTION_LEFT)
+
+        if x < 0 or x > 7 or y < 0 or y > 7:
+            left = ''
+        else:
+            left = board[self.get_new_point(point, self.DIRECTION_LEFT)]
+
+
+        x, y = self.get_new_point(point, self.DIRECTION_RIGHT)
+
+        if x < 0 or x > 7 or y < 0 or y > 7:
+            right = ''
+        else:
+            right = board[self.get_new_point(point, self.DIRECTION_RIGHT)]
+
+
+        x, y = self.get_new_point(point, self.DIRECTION_UP)
+
+        if x < 0 or x > 7 or y < 0 or y > 7:
+            up = ''
+        else:
+            up = board[self.get_new_point(point, self.DIRECTION_UP)]
+
+
+        x, y = self.get_new_point(point, self.DIRECTION_DOWN)
+
+        if x < 0 or x > 7 or y < 0 or y > 7:
+            down = ''
+        else:
+            down = board[self.get_new_point(point, self.DIRECTION_DOWN)]
 
 
         # Return true if a piece should be eliminated, else return false
