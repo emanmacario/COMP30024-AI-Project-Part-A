@@ -100,14 +100,14 @@ class WatchYourBack(Game):
         self.size = size
         self.board = self.init_board(board_config)
         self.pieces = self.init_pieces(self.board)
-
+        
 
         # Get the moves for a player
-        moves = self.get_all_moves(self.board, 'O', self.pieces)
+        moves = self.get_all_moves(self.board, self.SQUARE_WHITE, self.pieces)
 
 
         # Create the initial game state
-        self.initial = GameState(to_move='O', utility=0, 
+        self.initial = GameState(to_move=self.SQUARE_WHITE, utility=0, 
                         board=self.board, moves=moves, pieces=self.pieces)
 
 
@@ -211,7 +211,7 @@ class WatchYourBack(Game):
             print("You fucked up son. No solution!")
             return
 
-
+        """
         print("Final state")
         self.display(terminal_node.state)
 
@@ -219,6 +219,7 @@ class WatchYourBack(Game):
         print("Printing board states leading to elimination")
         for node in terminal_node.path():
             self.display(node.state)
+        """
 
         
         moves = terminal_node.solution()
@@ -375,9 +376,6 @@ class WatchYourBack(Game):
             if state.pieces[point] == '@':
                 black_pieces += 1
 
-
-        # The state is terminal if black or white has less than
-        # two pieces on the board
         if black_pieces == 0:
             return True
 
@@ -449,8 +447,9 @@ class WatchYourBack(Game):
 
 
     def get_legal_move(self, board, start, direction, player):
-        """Returns if a move is legal, given a starting
-        point, and a direction"""
+        """Returns a legal move given a player, starting point,
+        and direction. If there is no available move, returns
+        False."""
 
         # First check to see if the player has a piece on that
         # square.
