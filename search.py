@@ -3,7 +3,6 @@ File containing all the shit needed to search the state space
 """
 
 import sys
-import copy
 
 
 
@@ -70,9 +69,8 @@ class Node:
 
 
 
-def depth_limited_search(game, limit=100):
-    """Perform depth limited search with a default
-    depth limit of 100"""
+def depth_limited_search(game, limit):
+    """Perform depth limited search"""
 
     def recursive_dls(node, game, limit):
         if game.terminal_test(node.state):

@@ -398,15 +398,12 @@ class WatchYourBack(Game):
 
         all_moves = defaultdict(list)
 
-        for point in list(pieces):
-            if pieces[point] == player:
-
+        for start in list(pieces):
+            if pieces[start] == player:
                 for direction in directions:
-
-                    if self.is_legal_move(board, point, direction, player):
-                        new_valid_point = self.get_valid_point(board, point, direction)
-
-                        all_moves[point].append(new_valid_point)
+                    move = self.get_legal_move(board, start, direction, player)
+                    if move:
+                        all_moves[start].append(move)
 
         return all_moves
     
@@ -451,7 +448,7 @@ class WatchYourBack(Game):
 
 
 
-    def is_legal_move(self, board, start, direction, player):
+    def get_legal_move(self, board, start, direction, player):
         """Returns if a move is legal, given a starting
         point, and a direction"""
 
@@ -464,15 +461,17 @@ class WatchYourBack(Game):
         new_point = self.get_new_point(start, direction)
         jump_point = self.get_new_point(new_point, direction)
         
-        if self.is_square_open(board, new_point) or \
-                                 self.is_square_open(board, jump_point):
-            return True
+
+        # Return end point if a move is valid
+        if self.is_square_open(board, new_point):
+            return new_point
+        elif self.is_square_open(board, jump_point):
+            return jump_point
 
         return False
 
 
 
-    # HERE IS THE FUCKING BUG (FIXED NOW)
     def is_square_open(self, board, point):
         """A square is open if the there is no opponent
         piece on it, and it is not a corner square."""
@@ -504,21 +503,6 @@ class WatchYourBack(Game):
             column += 1
         
         return (column, row)
-
-
-
-    def get_valid_point(self, board, start, direction):
-        """Returns the new point of a piece after
-        making a valid move"""
-
-        # Calculate new possible points
-        new_point = self.get_new_point(start, direction)
-        jump_point = self.get_new_point(new_point, direction)
-        
-        if self.is_square_open(board, new_point):
-            return new_point
-
-        return jump_point
 
 
 
