@@ -18,7 +18,7 @@ from collections import defaultdict
 import copy
 
 
-GameState = namedtuple('GameState', 'to_move, utility, board, moves')
+GameState = namedtuple('GameState', 'to_move, utility, board, moves, pieces')
 
 
 
@@ -99,18 +99,19 @@ class WatchYourBack(Game):
     def __init__(self, board_config=None, size=8):
         self.size = size
         self.board = self.init_board(board_config)
+        self.pieces = self.init_pieces(self.board)
 
 
         # Get the moves for a player
-        moves = self.get_all_moves(self.board, 'O')
+        moves = self.get_all_moves(self.board, 'O', self.pieces)
 
 
         # Create the initial game state
         self.initial = GameState(to_move='O', utility=0, 
-                        board=self.board,
-                        moves=moves)
+                        board=self.board, moves=moves, pieces=self.pieces)
 
 
+        """
         self.print_all_moves(self.initial)
 
         new_state = self.result(self.initial, (((5,2),(6,2))))
@@ -123,6 +124,7 @@ class WatchYourBack(Game):
         print(self.initial.utility == newer_state.utility)
         print(self.initial.board == newer_state.board)
         print(self.initial.moves == newer_state.moves)
+        print(self.initial.pieces == newer_state.pieces)
 
 
         print()
@@ -137,9 +139,23 @@ class WatchYourBack(Game):
 
         print(sorted(self.initial.board.keys()))
         print(sorted(newer_state.board.keys()))
+        """
 
-        print("Newer board (8,6):", newer_state.board[(8,6)])
 
+
+
+    def init_pieces(self, board):
+
+        pieces = defaultdict(str)
+
+        for point in board:
+
+            if board[point] == self.SQUARE_WHITE or \
+                    board[point] == self.SQUARE_BLACK:
+
+                pieces[point] = board[point]
+
+        return pieces
 
 ################################################################################
         
@@ -166,8 +182,8 @@ class WatchYourBack(Game):
         in that order
         """
 
-        white_moves = self.get_all_moves(self.board, 'O')
-        black_moves = self.get_all_moves(self.board, '@')
+        white_moves = self.get_all_moves(self.board, 'O', self.pieces)
+        black_moves = self.get_all_moves(self.board, '@', self.pieces)
 
         total_white_moves = 0
         total_black_moves = 0
@@ -248,16 +264,20 @@ class WatchYourBack(Game):
 
         # Create a copy of the board
         new_board = state.board.copy()
+        new_pieces = state.pieces.copy()
 
 
-        # Make the move
+        # Make the move, updating the board and pieces data structures
         new_board[start] = '-'
         new_board[end] = state.to_move
+
+        del new_pieces[start]
+        new_pieces[end] = state.to_move
 
 
         # Perform piece elimination after the move, 
         # giving the newly moved piece elimination priority.
-        self.eliminate_pieces(end, new_board)
+        self.eliminate_pieces(end, new_board, new_pieces)
 
 
         # Get the next player to move, and all
@@ -266,43 +286,42 @@ class WatchYourBack(Game):
         # In part A, only White will move
         new_to_move = 'O'
 
-        new_moves = self.get_all_moves(new_board, new_to_move)
+        new_moves = self.get_all_moves(new_board, new_to_move, new_pieces)
 
         # Return the new gamestate
         return GameState(to_move=new_to_move, utility=0,
-                         board=new_board, moves=new_moves)
+                         board=new_board, moves=new_moves, pieces=new_pieces)
 
 
 
 
-    def eliminate_pieces(self, end, board):
+    def eliminate_pieces(self, end, board, pieces):
         """Eliminates pieces on the board after a given
         move, taking into account the priority of the piece
         which just moved. Mutates the input board"""
 
         # Check each position in the board
-        for point in list(board):
+        for point in list(pieces):
 
             # Do not eliminate a priority piece in
             # the first iteration of eliminations
             if point == end:
                 continue
 
-            piece = board[point]
+            piece = pieces[point]
 
-            # Only check the Black or White pieces
-            if piece != '@' and piece != 'O':
-                continue
 
             # If a piece is surrounded, remove
             # the piece from the board.
             if self.is_surrounded(point, piece, board):
                 board[point] = '-'
+                pieces[point] = '-'
 
 
         # Finally, check if the priority piece is eliminated
         if self.is_surrounded(end, board[end], board):
             board[end] = '-'
+            del pieces[end]
 
 
 
@@ -316,40 +335,12 @@ class WatchYourBack(Game):
         # the ability to eliminate either Black or White pieces.
         enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
 
-        # THERE WILL BE A BUG HERE, SINCE WE MAY BE ACCESSING
-        # VALUES OFF THE BOARD, LEADING TO SHIT LIKE board[(8,6)] = ''
 
         # Get all neighbouring pieces
-        x, y = self.get_new_point(point, self.DIRECTION_LEFT)
-
-        if x < 0 or x > 7 or y < 0 or y > 7:
-            left = ''
-        else:
-            left = board[self.get_new_point(point, self.DIRECTION_LEFT)]
-
-
-        x, y = self.get_new_point(point, self.DIRECTION_RIGHT)
-
-        if x < 0 or x > 7 or y < 0 or y > 7:
-            right = ''
-        else:
-            right = board[self.get_new_point(point, self.DIRECTION_RIGHT)]
-
-
-        x, y = self.get_new_point(point, self.DIRECTION_UP)
-
-        if x < 0 or x > 7 or y < 0 or y > 7:
-            up = ''
-        else:
-            up = board[self.get_new_point(point, self.DIRECTION_UP)]
-
-
-        x, y = self.get_new_point(point, self.DIRECTION_DOWN)
-
-        if x < 0 or x > 7 or y < 0 or y > 7:
-            down = ''
-        else:
-            down = board[self.get_new_point(point, self.DIRECTION_DOWN)]
+        left  = board.get(self.get_new_point(point, self.DIRECTION_LEFT), '')
+        right = board.get(self.get_new_point(point, self.DIRECTION_RIGHT), '')
+        up    = board.get(self.get_new_point(point, self.DIRECTION_UP), '')
+        down  = board.get(self.get_new_point(point, self.DIRECTION_DOWN), '')
 
 
         # Return true if a piece should be eliminated, else return false
@@ -380,8 +371,8 @@ class WatchYourBack(Game):
         black_pieces = 0
 
         # Might need to do list(state.board) to avoid bugs
-        for point in state.board:
-            if state.board[point] == '@':
+        for point in state.pieces:
+            if state.pieces[point] == '@':
                 black_pieces += 1
 
 
@@ -394,7 +385,7 @@ class WatchYourBack(Game):
 
 
 
-    def get_all_moves(self, board, player):
+    def get_all_moves(self, board, player, pieces):
         """All possible moves for a player, as a dictionary
         of tuples (start points), to lists of tuples (possible
         end point)"""
@@ -407,8 +398,8 @@ class WatchYourBack(Game):
 
         all_moves = defaultdict(list)
 
-        for point in list(board):
-            if board[point] == player:
+        for point in list(pieces):
+            if pieces[point] == player:
 
                 for direction in directions:
 
@@ -486,8 +477,7 @@ class WatchYourBack(Game):
         """A square is open if the there is no opponent
         piece on it, and it is not a corner square."""
 
-        x,y = point
-        if (x < 0 or x > 7 or y < 0 or y > 7):
+        if not board.get(point, ''):
             return False
 
         return board[point] == '-'
