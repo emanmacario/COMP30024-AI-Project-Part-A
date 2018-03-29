@@ -56,7 +56,7 @@ def main():
     if method == "Moves":
         game.print_legal_moves()
     else:
-        game.get_legal_move_sequence()
+        game.print_legal_move_sequence()
 
 
 

@@ -202,7 +202,6 @@ class WatchYourBack:
         return False
 
 
-
     def display(self, state):
         """
         Prints or otherwise displays current
@@ -248,7 +247,7 @@ class WatchYourBack:
 
 
 
-    def get_legal_move_sequence(self):
+    def print_legal_move_sequence(self):
         """
         Prints a sequence of legal moves for the White
         player that would lead all black pieces being 
@@ -340,7 +339,7 @@ class WatchYourBack:
         a player, given a board configuration.
         """
 
-        # Note that directions have been placed purposefully in this
+        # Get all directions, which have been placed purposefully in this
         # order so that moves can be inserted in order in the list.
         # This avoids the overhead of sorting, which is needed for
         # direct comparison of gamestates.
