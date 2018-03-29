@@ -1,10 +1,9 @@
-from board import *
+
 from game import *
 
 
 def parse_input():
-    """
-    Reads in a board configuration from
+    """Reads in a board configuration from
     the standard input, as well as the method
     of analysis of the board. Updates the game
     board and returns the method of analysis.
