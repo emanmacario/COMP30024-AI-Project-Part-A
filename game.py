@@ -331,14 +331,17 @@ class WatchYourBack(Game):
         # Get all neighbouring pieces
         left  = board.get(self.get_new_point(point, self.DIRECTION_LEFT), '')
         right = board.get(self.get_new_point(point, self.DIRECTION_RIGHT), '')
+
+        if left in enemy_pieces and right in enemy_pieces:
+            return True
+
+
         up    = board.get(self.get_new_point(point, self.DIRECTION_UP), '')
         down  = board.get(self.get_new_point(point, self.DIRECTION_DOWN), '')
 
-
-        # Return true if a piece should be eliminated, else return false
-        if (left in enemy_pieces and right in enemy_pieces) or \
-                (up in enemy_pieces and down in enemy_pieces):
+        if up in enemy_pieces and down in enemy_pieces:
             return True
+
 
         return False
 
