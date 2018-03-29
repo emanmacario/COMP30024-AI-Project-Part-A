@@ -13,11 +13,11 @@ import copy
 
 
 
-# A gamestate has the player to move, a list of possible moves in the form of a 
-# dictionary {(x,y): [(x1,y1)...(xn,yn)]}, a board in the form of a dictionary
-# of {(x, y): SQUARE_VALUE} entries, and a pieces dictionary, which maintains 
-# and keeps track of the locations of both players' pieces, in the same
-# fashion as the board dictionary.
+# A gamestate includes the player to move, a list of possible moves in the form 
+# of a dictionary {(x,y): [(x1,y1)...(xn,yn)]}, a board in the form of a 
+# dictionary {(x, y): SQUARE_VALUE} , and a pieces dictionary, which maintains 
+# and keeps track of the locations of both players' pieces, in the same fashion 
+# as the board dictionary.
 GameState = namedtuple('GameState', 'to_move, board, pieces, moves')
 
 
