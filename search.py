@@ -78,24 +78,16 @@ def depth_limited_search(game, limit):
         elif limit == 0:
             return 'cutoff'
         else:
-            """
-            # Add already explored node (state) to the explored set
-            if node not in explored:
-                explored.append(node)
-            """
-
+    
             cutoff_occurred = False
-
             path = node.path()
 
             for child in node.expand(game):
 
-                
                 # Do not explore already explored states
                 if child in path:
                     continue
                 
-
                 result = recursive_dls(child, game, limit-1)
                 if result == 'cutoff':
                     cutoff_occurred = True
