@@ -83,10 +83,6 @@ class Node:
         return isinstance(other, Node) and self.state == other.state
 
 
-    def __hash__(self):
-        return hash(self.state)
-
-
 
 
 def depth_limited_search(game, limit):
