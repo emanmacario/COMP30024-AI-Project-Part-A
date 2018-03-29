@@ -2,8 +2,12 @@
 COMP30024 Artificial Intelligence - Project Part A
 Semester 1, 2018.
 
-Created by Emmanuel Macario and James Marshall
+Adapted by Emmanuel Macario and James Marshall
 Student Numbers: Emmanuel - 831659, James - 728089
+
+This code has been modified from source code contained in the AIMA 
+Python GitHub repository (https://github.com/aimacode/aima-python),
+for Part A of the project.
 """
 
 import sys

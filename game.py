@@ -4,6 +4,9 @@ Semester 1, 2018.
 
 Created by Emmanuel Macario and James Marshall
 Student Numbers: Emmanuel - 831659, James - 728089
+
+This code has taken inspiration from source code contained in the AIMA 
+Python GitHub repository (https://github.com/aimacode/aima-python).
 """
 
 from collections import namedtuple
@@ -15,7 +18,7 @@ import copy
 
 # A gamestate includes the player to move, a list of possible moves in the form 
 # of a dictionary {(x,y): [(x1,y1)...(xn,yn)]}, a board in the form of a 
-# dictionary {(x, y): SQUARE_VALUE} , and a pieces dictionary, which maintains 
+# dictionary {(x,y): SQUARE_VALUE} , and a pieces dictionary, which maintains 
 # and keeps track of the locations of both players' pieces, in the same fashion 
 # as the board dictionary.
 GameState = namedtuple('GameState', 'to_move, board, pieces, moves')
@@ -190,7 +193,7 @@ class WatchYourBack():
 
         # Might need to do list(state.board) to avoid bugs
         for point in state.pieces:
-            if state.pieces[point] == '@':
+            if state.pieces[point] == self.SQUARE_BLACK:
                 total_black_pieces += 1
 
         if total_black_pieces == 0:
@@ -285,13 +288,13 @@ class WatchYourBack():
             # If a piece is surrounded, remove
             # the piece from the board.
             if self.is_surrounded(point, piece, board):
-                board[point] = '-'
+                board[point] = self.SQUARE_EMPTY
                 del pieces[point]
 
 
         # Finally, check if the priority piece is eliminated
         if self.is_surrounded(end, board[end], board):
-            board[end] = '-'
+            board[end] = self.SQUARE_EMPTY
             del pieces[end]
 
 
@@ -314,7 +317,7 @@ class WatchYourBack():
         left  = board.get(self.get_new_point(point, self.DIRECTION_LEFT), '')
         right = board.get(self.get_new_point(point, self.DIRECTION_RIGHT), '')
 
-        # Check if horizontally surrounded.
+        # Check if the player's piece is horizontally surrounded.
         if left in enemy_pieces and right in enemy_pieces:
             return True
 
@@ -323,7 +326,7 @@ class WatchYourBack():
         up   = board.get(self.get_new_point(point, self.DIRECTION_UP), '')
         down = board.get(self.get_new_point(point, self.DIRECTION_DOWN), '')
 
-        # Check if vertically surrounded.
+        # Check if the player's piece is vertically surrounded.
         if up in enemy_pieces and down in enemy_pieces:
             return True
 
