@@ -1,16 +1,7 @@
 """
 Game class
 """
-# BUG NEEDED TO BE FIXED
-# Note to self: when you access a value of a default dict that isnt there, you
-# actually create a new one
 
-
-# NOTE: - multiple elimination works
-#       - priority elimination works
-#       - corner elimination works
-
-from board import *
 from search import *
 
 from collections import namedtuple
