@@ -1,4 +1,11 @@
-from board import *
+"""
+COMP30024 Artificial Intelligence - Project Part A
+Semester 1, 2018.
+
+Created by Emmanuel Macario and James Marshall
+Student Numbers: Emmanuel - 831659, James - 728089
+"""
+
 from game import *
 
 
@@ -6,8 +13,9 @@ def parse_input():
     """
     Reads in a board configuration from
     the standard input, as well as the method
-    of analysis of the board. Updates the game
-    board and returns the method of analysis.
+    of analysis of the board. Creates a nested
+    list representation of the board, and returns
+    both the method and configuration.
     """
 
     # The total number of lines to be inputted
