@@ -1,14 +1,19 @@
 """
-File containing all the shit needed to search the state space
+COMP30024 Artificial Intelligence - Project Part A
+Semester 1, 2018.
+
+Created by Emmanuel Macario and James Marshall
+Student Numbers: Emmanuel - 831659, James - 728089
 """
 
 import sys
 
 
-
 class Node:
 
-    """A node in a search tree"""
+    """
+    A node in a search tree
+    """
 
     def __init__(self, state, parent=None, action=None, path_cost=None):
         """Creates a node in a search tree"""
@@ -70,7 +75,10 @@ class Node:
 
 
 def depth_limited_search(game, limit):
-    """Perform depth limited search"""
+    """
+    Perform depth limited search, on a state 
+    space, given a certain depth limit.
+    """
 
     def recursive_dls(node, game, limit):
         if game.terminal_test(node.state):

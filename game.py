@@ -1,5 +1,9 @@
 """
-Game class
+COMP30024 Artificial Intelligence - Project Part A
+Semester 1, 2018.
+
+Created by Emmanuel Macario and James Marshall
+Student Numbers: Emmanuel - 831659, James - 728089
 """
 
 from collections import namedtuple
@@ -8,6 +12,12 @@ from search import *
 import copy
 
 
+
+# A gamestate has the player to move, a list of possible moves in the form of a 
+# dictionary {(x,y): [(x1,y1)...(xn,yn)]}, a board in the form of a dictionary
+# of {(x, y): SQUARE_VALUE} entries, and a pieces dictionary, which maintains 
+# and keeps track of the locations of both players' pieces, in the same
+# fashion as the board dictionary.
 GameState = namedtuple('GameState', 'to_move, board, pieces, moves')
 
 
@@ -15,13 +25,9 @@ GameState = namedtuple('GameState', 'to_move, board, pieces, moves')
 class WatchYourBack():
 
     """
-    Play Watch Your Back! on an 8 x 8 board with White
-    (first player) playing 'O', and Black (second player)
-    playing '@'. A state has the player to move, a list of 
-    moves in the form of a dictionary {(x,y): [(x1,y1)...(xn,yn)]}, 
-    and a board, in the form of a dict of {(x, y): SQUARE_VALUE} entries, 
-    and a pieces dictionary, which maintains and keeps track of the
-    locations of both players' pieces.
+    This class represents a game of 'Watch Your Back!' on an 
+    8 x 8 board, with the White player playing 'O', and the Black
+    player playing '@'.
     """
 
     # Possible directions of movement
@@ -38,6 +44,10 @@ class WatchYourBack():
 
 
     def __init__(self, board_config=None, size=8):
+        """
+        Initialise a new game of 'Watch Your Back!'
+        """
+
         # Set the size of the board.
         self.size = size
 
@@ -218,8 +228,8 @@ class WatchYourBack():
         board = self.initial.board
         pieces = self.initial.pieces
 
-        white_moves = self.get_all_moves(board, 'O', pieces)
-        black_moves = self.get_all_moves(board, '@', pieces)
+        white_moves = self.get_all_moves(board, self.SQUARE_WHITE, pieces)
+        black_moves = self.get_all_moves(board, self.SQUARE_BLACK, pieces)
 
         total_white_moves = 0
         total_black_moves = 0
@@ -296,7 +306,8 @@ class WatchYourBack():
         # Get the enemy pieces. A corner square is considered
         # to be an enemy piece in this context, since it has
         # the ability to eliminate either Black or White pieces.
-        enemy_pieces = ['@' if piece == 'O' else 'O', 'X']
+        enemy_pieces = [self.SQUARE_BLACK if piece == self.SQUARE_WHITE else \
+                        self.SQUARE_WHITE, self.SQUARE_CORNER]
 
 
         # Get the horizontally neighbouring pieces.
