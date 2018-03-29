@@ -25,7 +25,7 @@ GameState = namedtuple('GameState', 'to_move, board, pieces, moves')
 
 
 
-class WatchYourBack():
+class WatchYourBack:
 
     """
     This class represents a game of 'Watch Your Back!' on an 
