@@ -19,19 +19,19 @@ formulation. Our model of the problem consists of an initial state, a terminal
 test, and actions (moves)
 
 The search algorithm that our program uses is iterative deepening depth-first
-search. The branching factor of our tree is equal to the maximum number of moves
-available for all White pieces, for any valid board configuration including all
-those pieces. Since we are only expected to handle a maximum of 5 white pieces
+search. The branching factor of our tree is equal to the maximum number of valid
+moves available for all White pieces, for any valid board configuration. Since
+we are only expected to handle a maximum of 5 white pieces
 in Part A, the branching factor is 5 * 4 (max possible moves for each piece),
 which equals 20. For any normal board configuration, however, the branching
 factor could be 12 * 4 = 48, since there will be a maximum of 12 White pieces.
 
-If the condition holds that we will only be given 'valid' board configurations, configurations i.e. board configurations allowing White pieces to eliminate 
+If the condition holds that we will only be given 'valid' board configurations,
+configurations i.e. board configurations allowing White pieces to eliminate
 black pieces in a maximum of 5 moves, then the maximum search depth will be
-equal to d = 5. If we were to be given a board configuration where it was not 
-possible to eliminate all black pieces, the state space would be infinite, and 
+equal to d = 5. If we were to be given a board configuration where it was not
+possible to eliminate all black pieces, the state space would be infinite, and
 hence the maximum search depth would be infinite.
-
 
 
 
@@ -48,3 +48,18 @@ the maximum search depth? Does your algorithm always return the shortest possibl
 sequence of moves that will eliminate all enemy pieces?
 
 
+End of question 1
+our time complexity is O(n), where n is the number of pieces. We search through
+the board to get our dictionaries for search, which would be s^2, where s is the
+size of the board, however, this is a constant. We then search through every
+piece (n) and for every piece search all of the possible spaces the piece could
+move to maximum 8n, leading to a time complexity of O(8n) = O(n).
+The space complexity of our available move counter is O(n), where n is the
+number of pieces. This is because we store our board state, and we then store
+all of the possible moves that each piece, n, can make (maximum 4). This leads
+to a space complexity of O(4n) = O(n).
+
+End of Question 2
+Yes, our algorithm will always return the shortest possible path as we are
+implementing iterative deepening search, with a path cost equal to 1. This will
+always be optimal.
