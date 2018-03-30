@@ -1,30 +1,54 @@
 COMP30024 Artificial Intelligence - Project Part A
 Semester 1, 2018.
 
+Analysis of our Program
+
 Written by Emmanuel Macario and James Marshall
 Student Numbers: Emmanuel - 831659, James - 728089
 
 
-Analysis of our Program:
 
 Finding legal move counts:
-For calculating the number of available moves for both players,
+For calculating the number of available moves for both players, our program
+knows the positions of all pieces currently on the board, and the current
+configuration of the board itself.
+
+Firstly, we search through the board to get the positions of all the pieces.
+This is O(s^2), where s = length (or height) of the board. Since this is only
+done once, this is essentially a constant factor, and thus can be ignored. 
+
+Then, we iterate through all the pieces, and for each piece that belongs to the 
+player for whom we are calculating the total number of possible moves, we have 
+to search through all the potential positions a piece could move to, checking 4 directions and a maximum of two end positions. This leads to a maximum of 8n 
+operations for each player, resulting in a maximum of 16n operations overall. 
+Removing multiplicative constants, we get a time complexity of O(n), where n is 
+the total number of pieces on the board.
+
+The space complexity of our available move counter is O(n), where n is the
+number of pieces. This is because we store our board state, and we then store
+all of the possible moves that each piece can make (maximum 4). This leads
+to a space complexity of O(4n) = O(n).
+
 
 
 
 Finding a legal move sequence:
-For calculating the sequence of moves to eliminate all enemy pieces, we have
-decided to model the search problem similarly to a single-state problem
+For calculating the sequence of legal moves to eliminate all enemy pieces, we 
+have decided to model the search problem similarly to a single-state problem
 formulation. Our model of the problem consists of an initial state, a terminal
-test, and actions (moves)
+test, and actions (moves). Our GameState representation abstracts these concepts
+down into a tuple consisting of the current board configuration, the player to 
+move, the locations of all pieces, and the current possible moves. We then 
+generate the state space on the fly, given the initial state, to search for a 
+goal node.
 
 The search algorithm that our program uses is iterative deepening depth-first
 search. The branching factor of our tree is equal to the maximum number of valid
 moves available for all White pieces, for any valid board configuration. Since
-we are only expected to handle a maximum of 5 white pieces
-in Part A, the branching factor is 5 * 4 (max possible moves for each piece),
-which equals 20. For any normal board configuration, however, the branching
-factor could be 12 * 4 = 48, since there will be a maximum of 12 White pieces.
+we are only expected to handle a maximum of 5 white pieces in Part A, the 
+branching factor is 5 * 4 (max possible moves for each piece), which equals 20. 
+For any normal board configuration, however, the branching factor could be 
+12 * 4 = 48, since there will be a maximum of 12 White pieces.
 
 If the condition holds that we will only be given 'valid' board configurations,
 configurations i.e. board configurations allowing White pieces to eliminate
@@ -33,33 +57,7 @@ equal to d = 5. If we were to be given a board configuration where it was not
 possible to eliminate all black pieces, the state space would be infinite, and
 hence the maximum search depth would be infinite.
 
-
-
-
-
-For calculating the number of available moves, what is the time complexity and space
-complexity of your program? You should not count the time taken to read the board
-configuration from input.
-
-• For calculating the sequence of moves to eliminate all enemy pieces, how have you
-modelled the problem as a search problem? What search algorithm does your
-program use? If applicable, what is the branching factor of your search tree? What is
-the maximum search depth? Does your algorithm always return the shortest possible
-sequence of moves that will eliminate all enemy pieces?
-
-
-End of question 1
-our time complexity is O(n), where n is the number of pieces. We search through
-the board to get our dictionaries for search, which would be s^2, where s is the
-size of the board, however, this is a constant. We then search through every
-piece (n) and for every piece search all of the possible spaces the piece could
-move to maximum 8n, leading to a time complexity of O(8n) = O(n).
-The space complexity of our available move counter is O(n), where n is the
-number of pieces. This is because we store our board state, and we then store
-all of the possible moves that each piece, n, can make (maximum 4). This leads
-to a space complexity of O(4n) = O(n).
-
-End of Question 2
-Yes, our algorithm will always return the shortest possible path as we are
-implementing iterative deepening search, with a path cost equal to 1. This will
-always be optimal.
+Our algorithm will always return the shortest possible sequence of moves that
+will eliminate all enemy pieces, since we have implemented iterative deepening 
+search, with a path cost equal to 1 for each move. Hence, it is optimal since 
+the path cost is a non-decreasing function of the depth of the node.
